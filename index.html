@@ -8,6 +8,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="維修回報單">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛠️</text></svg>">
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛠️</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -71,13 +72,6 @@
         .underlined-option:active, .underlined-option:hover, .underlined-option:visited {
             color: #424242 !important;
         }
-        
-        #addToHomeBtn {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            z-index: 10;
-        }
 
         /* 深色模式支援 */
         @media (prefers-color-scheme: dark) {
@@ -98,70 +92,35 @@
             }
         }
         
-        /* 添加到主屏幕對話框 */
-        #homeScreenModal {
+        /* 安裝成功通知 */
+        #installSuccess {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 20;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 1000;
             display: none;
-            justify-content: center;
-            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 300px;
         }
         
-        .modal-content {
-            background-color: var(--main-bg);
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            width: 90%;
-            max-width: 400px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        .dark .modal-content {
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        /* 隱藏PWA相關按鈕 */
+        @media all and (display-mode: standalone) {
+            #addToHomeBtn {
+                display: none;
+            }
         }
     </style>
 </head>
 <body class="bg-mainbg min-h-screen">
-    <!-- 添加到主屏幕按鈕 -->
-    <button id="addToHomeBtn" class="px-2 py-2 bg-buttonbg rounded-full shadow-md">
-        <i class="fas fa-plus-circle text-xl"></i>
-    </button>
-    
-    <!-- 添加到主屏幕對話框 -->
-    <div id="homeScreenModal">
-        <div class="modal-content">
-            <h3 class="text-lg font-bold mb-3">添加到主屏幕</h3>
-            <div id="iosInstructions" class="hidden">
-                <p class="mb-2">iOS設備上添加步驟：</p>
-                <ol class="list-decimal pl-5 mb-3">
-                    <li>點擊底部<i class="fas fa-share-alt mx-1"></i>分享按鈕</li>
-                    <li>滑動並點擊<i class="fas fa-plus-square mx-1"></i>「添加到主屏幕」</li>
-                </ol>
-                <img src="https://i.imgur.com/OgyJsxw.png" alt="iOS添加到主屏幕演示" class="w-full mb-3 rounded">
-            </div>
-            <div id="androidInstructions" class="hidden">
-                <p class="mb-2">Android設備上添加步驟：</p>
-                <ol class="list-decimal pl-5 mb-3">
-                    <li>點擊右上角<i class="fas fa-ellipsis-v mx-1"></i>選單按鈕</li>
-                    <li>選擇「添加到主屏幕」選項</li>
-                </ol>
-            </div>
-            <div id="otherInstructions" class="hidden">
-                <p class="mb-2">在您的設備上：</p>
-                <ol class="list-decimal pl-5 mb-3">
-                    <li>打開瀏覽器菜單</li>
-                    <li>尋找「添加到主屏幕」或類似選項</li>
-                </ol>
-            </div>
-            <div class="flex justify-end">
-                <button id="closeModalBtn" class="px-4 py-2 bg-buttonbg rounded-md">關閉</button>
-            </div>
-        </div>
+    <!-- 安裝成功通知 -->
+    <div id="installSuccess">
+        <p><i class="fas fa-check-circle mr-2"></i>已成功添加到主屏幕!</p>
     </div>
     
     <div class="container mx-auto px-4 py-8 max-w-3xl">
@@ -257,7 +216,7 @@
                     <h2 class="text-xl font-semibold text-maintext mb-4">2. Error Code 出現的密度</h2>
                     <div class="flex flex-wrap gap-3 mb-4">
                         <button class="error-density-btn px-4 py-2 bg-buttonbg rounded-md border border-bordergray" data-density="運作時必定發生">運作時必定發生</button>
-                        <button class="error-density-btn px-4 py-2 bg-buttonbg rounded-md border border-bordergray" data-density="一日3次或以上">一日3次或以上</button>
+                        <button class="error-density-btn px-4 py-2 bg-buttonbg rounded-md border border-bordergray" data-density="每日一次或以上">每日一次或以上</button>
                         <button class="error-density-btn px-4 py-2 bg-buttonbg rounded-md border border-bordergray" data-density="每日1次或以下">每日1次或以下</button>
                     </div>
                     <div class="flex justify-start">
@@ -327,7 +286,9 @@
         
         <!-- 版權資訊 -->
         <div class="text-center text-maintext text-sm">
-            <p>© 2023 日本包裝機維修系統 Beta v1</p>
+            <button id="addToHomeBtn" class="text-maintext hover:underline">
+                <i class="fas fa-plus-circle mr-1"></i> 加到手機主頁
+            </button>
         </div>
         
         <!-- 用於複製的隱藏元素 -->
@@ -388,27 +349,41 @@
         }
         
         // 添加到主屏幕功能
-        function showAddToHomeScreen() {
-            const modal = document.getElementById('homeScreenModal');
-            modal.style.display = 'flex';
-            
-            // 判斷設備類型並顯示對應說明
-            const ua = navigator.userAgent;
-            
-            // 隱藏所有說明
-            document.getElementById('iosInstructions').classList.add('hidden');
-            document.getElementById('androidInstructions').classList.add('hidden');
-            document.getElementById('otherInstructions').classList.add('hidden');
-            
-            // 根據用戶代理顯示對應說明
-            if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) {
-                document.getElementById('iosInstructions').classList.remove('hidden');
-            } else if (/Android/.test(ua)) {
-                document.getElementById('androidInstructions').classList.remove('hidden');
+        function addToHomeScreen() {
+            // 使用 beforeinstallprompt 事件來添加到主屏幕
+            if (deferredPrompt) {
+                // 顯示安裝提示
+                deferredPrompt.prompt();
+                
+                // 等待用戶做出選擇
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('用戶接受了安裝到主屏幕');
+                        // 顯示成功通知
+                        const successNotice = document.getElementById('installSuccess');
+                        successNotice.style.display = 'block';
+                        setTimeout(() => {
+                            successNotice.style.display = 'none';
+                        }, 3000);
+                    } else {
+                        console.log('用戶拒絕了安裝到主屏幕');
+                    }
+                    deferredPrompt = null;
+                });
             } else {
-                document.getElementById('otherInstructions').classList.remove('hidden');
+                // 如果不支持直接添加，則提供手動添加的指南
+                alert('請使用瀏覽器的"添加到主屏幕"功能將此應用添加到您的手機主頁');
             }
         }
+
+        // 保存安裝提示
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // 阻止 Chrome 自動顯示安裝提示
+            e.preventDefault();
+            // 保存事件，以便稍後使用
+            deferredPrompt = e;
+        });
 
         // DOM 元素載入完成後執行
         document.addEventListener('DOMContentLoaded', function() {
@@ -426,19 +401,7 @@
             });
 
             // 添加到主屏幕按鈕點擊事件
-            document.getElementById('addToHomeBtn').addEventListener('click', showAddToHomeScreen);
-            
-            // 關閉模態框按鈕
-            document.getElementById('closeModalBtn').addEventListener('click', function() {
-                document.getElementById('homeScreenModal').style.display = 'none';
-            });
-            
-            // 點擊模態框背景關閉
-            document.getElementById('homeScreenModal').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    this.style.display = 'none';
-                }
-            });
+            document.getElementById('addToHomeBtn').addEventListener('click', addToHomeScreen);
 
             // 初始設定事件監聽
             setupEventListeners();
