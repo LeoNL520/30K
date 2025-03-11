@@ -4,25 +4,15 @@
     <meta name="description" content="日本包裝機維修回報單 - 快速報告和安排維修服務">
     <meta name="author" content="Leo">
     <title>日本包裝機維修回報單</title>
-    
-    <!-- PWA 支持 -->
+    <!-- Web App 功能支援 -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="維修回報單">
-    <meta name="theme-color" content="#909FA6" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#667780" media="(prefers-color-scheme: dark)">
-    
-    <!-- Manifest 連接 -->
-    <link rel="manifest" href="./manifest.json">
-    
-    <!-- 圖標 -->
-    <link rel="icon" href="./icon-192.png">
-    <link rel="apple-touch-icon" href="./icon-192.png">
-    
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛠️</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛠️</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <script>
         tailwind.config = {
             theme: {
@@ -102,13 +92,6 @@
             }
         }
         
-        /* 深色模式下的版本號顯示 */
-        @media (prefers-color-scheme: dark) {
-            .version-text {
-                color: #e0e0e0;
-            }
-        }
-
         /* 安裝成功通知 */
         #installSuccess {
             position: fixed;
@@ -126,36 +109,10 @@
             max-width: 300px;
         }
         
-        /* iOS引導提示 */
-        .ios-guide {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(255,255,255,0.95);
-            color: #333;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            z-index: 1000;
-            display: none;
-            text-align: center;
-            max-width: 90%;
-            animation: slideUp 0.3s ease-out;
-        }
-        
-        @keyframes slideUp {
-            from { transform: translate(-50%, 100%); }
-            to { transform: translate(-50%, 0); }
-        }
-        
         /* 隱藏PWA相關按鈕 */
         @media all and (display-mode: standalone) {
             #addToHomeBtn {
-                display: none !important;
-            }
-            .footer-text {
-                margin-top: 3px;
+                display: none;
             }
         }
     </style>
@@ -164,15 +121,6 @@
     <!-- 安裝成功通知 -->
     <div id="installSuccess">
         <p><i class="fas fa-check-circle mr-2"></i>已成功添加到主屏幕!</p>
-    </div>
-    
-    <!-- iOS安裝指南 -->
-    <div id="iosInstallGuide" class="ios-guide">
-        <div class="text-lg font-semibold mb-2">加到主屏幕</div>
-        <p class="mb-2">點擊 <i class="fas fa-share-alt text-blue-500"></i> 分享按鈕，然後選擇「加到主屏幕」</p>
-        <button id="closeIosGuide" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-3 py-1 rounded mt-2">
-            我知道了
-        </button>
     </div>
     
     <div class="container mx-auto px-4 py-8 max-w-3xl">
@@ -185,8 +133,142 @@
         <div class="bg-mainbg p-6 rounded-b-lg shadow-md mb-6 border border-t-0 border-bordergray">
             <!-- 問答區域 -->
             <div id="questionArea" class="mb-6">
-                <!-- 您的问答区域代码保持不变 -->
-                <!-- ... -->
+                <div id="question1" class="question-container">
+                    <h2 class="text-xl font-semibold text-maintext mb-4">1. 有沒有Error Code</h2>
+                    <div class="flex flex-wrap gap-4">
+                        <button id="btnErrorCode" class="px-4 py-2 bg-buttonbg rounded-md">
+                            有 Error Code
+                        </button>
+                        <button id="btnNoErrorCode" class="px-4 py-2 bg-buttonbg rounded-md">
+                            沒有 Error Code
+                        </button>
+                    </div>
+                </div>
+
+                <div id="errorCodeSelection" class="hidden mt-6">
+                    <h2 class="text-xl font-semibold text-maintext mb-4">1. 請選擇 Error Code</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        <button class="error-code-btn px-3 py-2 bg-buttonbg border border-bordergray rounded" data-code="E30">E30</button>
+                        <button class="error-code-btn px-3 py-2 bg-buttonbg border border-bordergray rounded" data-code="E22">E22</button>
+                        <button class="error-code-btn px-3 py-2 bg-buttonbg border border-bordergray rounded" data-code="E23">E23</button>
+                        <button class="error-code-btn px-3 py-2 bg-buttonbg border border-bordergray rounded" data-code="E20">E20</button>
+                        <button class="error-code-btn px-3 py-2 bg-buttonbg border border-bordergray rounded" data-code="E21">E21</button>
+                        <button class="error-code-btn px-3 py-2 bg-buttonbg border border-bordergray rounded" data-code="E24">E24</button>
+                        <button class="error-code-btn px-3 py-2 bg-buttonbg border border-bordergray rounded" data-code="E25">E25</button>
+                        <button class="error-code-btn px-3 py-2 bg-buttonbg border border-bordergray rounded" data-code="E26">E26</button>
+                        <button class="error-code-btn px-3 py-2 bg-buttonbg border border-bordergray rounded" data-code="E27">E27</button>
+                        <button class="error-code-btn px-3 py-2 bg-buttonbg border border-bordergray rounded" data-code="E31">E31</button>
+                        <button class="error-code-btn px-3 py-2 bg-buttonbg border border-bordergray rounded" data-code="PE">PE</button>
+                        <button class="error-code-btn px-3 py-2 bg-buttonbg border border-bordergray rounded" data-code="E00">E00</button>
+                        <button class="error-code-btn px-3 py-2 bg-buttonbg border border-bordergray rounded" data-code="E01">E01</button>
+                        <button class="error-code-btn px-3 py-2 bg-buttonbg border border-bordergray rounded" data-code="E18">E18</button>
+                        <button class="error-code-btn px-3 py-2 bg-buttonbg border border-bordergray rounded" data-code="E28">E28</button>
+                    </div>
+                    <div class="mt-4 flex justify-between">
+                        <button id="btnBackToQuestion1" class="px-3 py-1 bg-buttonbg rounded-md text-sm">
+                            <i class="fas fa-arrow-left mr-1"></i> 返回
+                        </button>
+                    </div>
+                </div>
+
+                <div id="errorCodeDetails" class="hidden mt-6 p-4 bg-mainbg rounded-lg border border-bordergray">
+                    <h3 id="selectedErrorCodeTitle" class="text-lg font-semibold text-maintext mb-2"></h3>
+                    <p id="errorCodeDescription" class="text-maintext mb-4 whitespace-pre-line"></p>
+                    <div class="flex justify-between">
+                        <button id="btnBackToErrorSelection" class="px-3 py-1 bg-buttonbg rounded-md text-sm">
+                            <i class="fas fa-arrow-left mr-1"></i> 返回
+                        </button>
+                        <button id="btnScheduleRepair" class="px-4 py-2 bg-buttonbg rounded-md">
+                            安排維修
+                        </button>
+                    </div>
+                </div>
+
+                <div id="noErrorCodeOptions" class="hidden mt-6">
+                    <h2 class="text-xl font-semibold text-maintext mb-3">1. 請提供資訊</h2>
+                    <div class="mb-4">
+                        <textarea id="noErrorDetails" class="w-full p-3 border border-bordergray rounded-md focus:ring focus:outline-none text-base bg-white text-maintext" rows="3" placeholder="請描述問題..."></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <p class="text-maintext mb-2">常見問題：</p>
+                        <div class="flex flex-wrap">
+                            <span class="underlined-option" data-detail="吸塵摩打完全 / 部份無反應">吸塵摩打完全 / 部份無反應</span>
+                            <span class="underlined-option" data-detail="吸塵喉無吸力或吸力減弱">吸塵喉無吸力或吸力減弱</span>
+                            <span class="underlined-option" data-detail="包裝紙夾粉">包裝紙夾粉</span>
+                            <span class="underlined-option" data-detail="包裝紙封口異常">包裝紙封口異常</span>
+                            <span class="underlined-option" data-detail="沒有電源">沒有電源</span>
+                            <span class="underlined-option" data-detail="有異常聲音">有異常聲音</span>
+                            <span class="underlined-option" data-detail="零件破損">零件破損</span>
+                            <span class="underlined-option" data-detail="其他問題">其他問題</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between">
+                        <button id="btnBackToQuestion1FromNoError" class="px-3 py-1 bg-buttonbg rounded-md text-sm">
+                            <i class="fas fa-arrow-left mr-1"></i> 返回
+                        </button>
+                        <button id="btnNoErrorScheduleRepair" class="px-4 py-2 bg-buttonbg rounded-md">
+                            安排維修
+                        </button>
+                    </div>
+                </div>
+
+                <div id="question2" class="hidden mt-6">
+                    <h2 class="text-xl font-semibold text-maintext mb-4">2. Error Code 出現的密度</h2>
+                    <div class="flex flex-wrap gap-3 mb-4">
+                        <button class="error-density-btn px-4 py-2 bg-buttonbg rounded-md border border-bordergray" data-density="運作時必定發生">運作時必定發生</button>
+                        <button class="error-density-btn px-4 py-2 bg-buttonbg rounded-md border border-bordergray" data-density="每日一次或以上">每日一次或以上</button>
+                        <button class="error-density-btn px-4 py-2 bg-buttonbg rounded-md border border-bordergray" data-density="每日1次或以下">每日1次或以下</button>
+                    </div>
+                    <div class="flex justify-start">
+                        <button id="btnBackToErrorDetails" class="px-3 py-1 bg-buttonbg rounded-md text-sm">
+                            <i class="fas fa-arrow-left mr-1"></i> 返回
+                        </button>
+                    </div>
+                </div>
+
+                <div id="question3" class="hidden mt-6">
+                    <h2 class="text-xl font-semibold text-maintext mb-4">3. 機身編號</h2>
+                    <p class="text-maintext mb-2">在機身中間高度，左側銀色貼紙，產品編號Axxxxx</p>
+                    <input type="text" id="machineNumber" placeholder="請輸入機身編號" class="w-full p-3 border border-bordergray rounded-md focus:ring focus:outline-none text-base bg-white text-maintext">
+                    <div class="mt-3 flex justify-between">
+                        <button id="btnBackToPreviousQ" class="px-3 py-1 bg-buttonbg rounded-md text-sm">
+                            <i class="fas fa-arrow-left mr-1"></i> 返回
+                        </button>
+                        <button id="btnContinue3" class="px-4 py-2 bg-buttonbg rounded-md border border-bordergray">
+                            繼續
+                        </button>
+                    </div>
+                </div>
+
+                <div id="question4" class="hidden mt-6">
+                    <h2 class="text-xl font-semibold text-maintext mb-4">4. 客戶編號或診所名稱</h2>
+                    <input type="text" id="customerInfo" placeholder="請輸入客戶編號或診所名稱" class="w-full p-3 border border-bordergray rounded-md focus:ring focus:outline-none text-base bg-white text-maintext">
+                    <div class="mt-3 flex justify-between">
+                        <button id="btnBackToQuestion3" class="px-3 py-1 bg-buttonbg rounded-md text-sm">
+                            <i class="fas fa-arrow-left mr-1"></i> 返回
+                        </button>
+                        <button id="btnContinue4" class="px-4 py-2 bg-buttonbg rounded-md border border-bordergray">
+                            繼續
+                        </button>
+                    </div>
+                </div>
+
+                <div id="question5" class="hidden mt-6">
+                    <h2 class="text-xl font-semibold text-maintext mb-4">5. 請選擇操作</h2>
+                    <div class="flex flex-wrap gap-4 mb-4">
+                        <button id="btnSendWhatsApp" class="flex items-center px-4 py-2 bg-green-500 text-white rounded-md border border-bordergray hover:bg-green-600">
+                            <i class="fab fa-whatsapp mr-2 text-xl"></i> 發送給 Leo (WhatsApp)
+                        </button>
+                        <button id="btnCopyOnly" class="px-4 py-2 bg-buttonbg rounded-md border border-bordergray">
+                            <i class="far fa-copy mr-2"></i> 只複製資料
+                        </button>
+                    </div>
+                    <div class="flex justify-start">
+                        <button id="btnBackToQuestion4" class="px-3 py-1 bg-buttonbg rounded-md text-sm">
+                            <i class="fas fa-arrow-left mr-1"></i> 返回
+                        </button>
+                    </div>
+                </div>
             </div>
             
             <!-- 表單結果區 -->
@@ -202,12 +284,11 @@
             </div>
         </div>
         
-        <!-- 版權及版本信息 -->
-        <div class="text-center text-maintext text-sm flex flex-col items-center space-y-1">
-            <button id="addToHomeBtn" class="inline-flex items-center text-maintext hover:underline">
+        <!-- 版權資訊 -->
+        <div class="text-center text-maintext text-sm">
+            <button id="addToHomeBtn" class="text-maintext hover:underline">
                 <i class="fas fa-plus-circle mr-1"></i> 加到手機主頁
             </button>
-            <p class="footer-text">© 2023 日本包裝機維修系統 <span class="font-medium">v1.0.1</span></p>
         </div>
         
         <!-- 用於複製的隱藏元素 -->
@@ -216,88 +297,408 @@
 
     <!-- JavaScript -->
     <script>
-        // 您的现有 JavaScript 代码保持不变...
-        
-        // 添加PWA相关代码
-        
-        // 保存安装提示事件
-        let deferredPrompt;
-        
-        // 监听 beforeinstallprompt 事件
-        window.addEventListener('beforeinstallprompt', (e) => {
-            // 阻止 Chrome 自动显示安装提示
-            e.preventDefault();
+        // 狀態變數
+        let formData = {
+            errorCode: '',
+            errorDensity: '',
+            machineNumber: '',
+            details: '',
+            customerInfo: '',
+            currentQuestion: 1, // 追蹤當前問題
+            previousQuestion: null // 追蹤上一個問題
+        };
+
+        // Error Code 說明
+        const errorCodeDescriptions = {
+            'E30': `請先嘗試以下\n\n黑色海棉粘結：\n可嘗試用一字批分離吸塵切換部份的黑色海棉，大機率與上方機件粘連。\n\n吸塵切換空間內積粉太多：\n嘗試以硬毛刷清理機件，及以乾布清理黑色海棉。`,
+            'E22': `請先嘗試以下\n\n右藥格無法進行左右動作，或Sensor偵測不到右藥格原始位置：\n拆走右藥格，嘗試包裝空袋，看看有沒有再Error。如沒有再Error，可嘗試清理藥格積粉，整理琴鍵，以及推開藥臂下方，清潔粉塵。`,
+            'E23': `請先嘗試以下\n\n右藥格無法進行左右動作，或Sensor偵測不到右藥架移動：\n拆走右藥格，嘗試空包15包（可以拆包裝紙），看看有沒有再Error。如沒有再Error，可嘗試清理右藥格積粉，整理琴鍵，以及推開右藥臂下方，清潔粉塵。`,
+            'E20': `建議維修\n\n原因：右藥格無法進行前後動作，或者Sensor偵測不到右藥格前方位置`,
+            'E21': `建議維修\n\n原因：右藥格無法進行前後動作，或者Sensor偵測不到右藥格後方位置`,
+            'E24': `建議維修\n\n原因：左藥格無法進行前後動作，或者Sensor偵測不到左藥格前位置`,
+            'E25': `建議維修\n\n原因：左藥格無法進行前後動作，或者Sensor偵測不到左藥格後位置`,
+            'E26': `請先嘗試以下\n左藥格無法進行左右動作，或者Sensor偵測不到左藥格原始位置：\n拆走左藥格，嘗試空包30包（可以拆走包裝紙），看看有沒有再Error。如沒有再Error，可嘗試清理左藥格積粉，整理琴鍵，以及推開左藥臂下方，清潔粉塵。`,
+            'E27': `請先嘗試以下\n\n左藥格無法進行左右動作，或者Sensor偵測不到左藥格移動：\n拆走左藥格，嘗試空包30包（可以拆走包裝紙），看看有沒有再Error。如沒有再Error，可嘗試清理左藥格積粉，整理琴鍵，以及推開左藥臂下方，清潔粉塵。`,
+            'E31': `請先嘗試以下\n吸塵切換空間內積粉太多：\n嘗試以硬毛刷清理機件，及以乾布清理黑色海棉。`,
+            'PE': `請先嘗試以下\n檢查包裝紙有沒有裝好，正常蹲下查看時會看見包裝紙左上10點鐘方向Sensor燈亮紅燈。`,
+            'E00': `建議維修\n\n原因：加熱器滾筒部發生了卡紙或者有異物捲入`,
+            'E01': `建議維修\n\n原因：加熱器滾简無法進行旋轉，或者傳感器偵測不到滾筒的原始位置`,
+            'E18': `建議維修\n\n原因：加熱器滾筒溫度異常`,
+            'E28': `建議維修\n\n原因：推動藥格的機件無法進行上推或下落的動作，或者傳感器偵測不到該機件上翻原始位置、頂點`
+        };
+
+        // 隱藏所有問題頁面
+        function hideAllQuestions() {
+            const questionElements = [
+                'question1', 'errorCodeSelection', 'errorCodeDetails',
+                'noErrorCodeOptions', 'question2', 'question3', 'question4', 'question5'
+            ];
             
-            // 保存事件，以便稍后使用
-            deferredPrompt = e;
-            
-            // 确保添加到主屏幕按钮显示
-            const addToHomeBtn = document.getElementById('addToHomeBtn');
-            if (addToHomeBtn) {
-                addToHomeBtn.style.display = 'inline-flex';
+            questionElements.forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+        }
+
+        // 顯示特定問題頁面
+        function showQuestion(id) {
+            hideAllQuestions();
+            const element = document.getElementById(id);
+            if (element) {
+                element.classList.remove('hidden');
             }
-            
-            console.log('可以安装应用');
-        });
+        }
         
         // 添加到主屏幕功能
         function addToHomeScreen() {
+            // 使用 beforeinstallprompt 事件來添加到主屏幕
             if (deferredPrompt) {
-                // 显示安装提示
+                // 顯示安裝提示
                 deferredPrompt.prompt();
                 
-                // 等待用户做出选择
+                // 等待用戶做出選擇
                 deferredPrompt.userChoice.then((choiceResult) => {
                     if (choiceResult.outcome === 'accepted') {
-                        console.log('用户接受安装');
-                        // 显示成功通知
+                        console.log('用戶接受了安裝到主屏幕');
+                        // 顯示成功通知
                         const successNotice = document.getElementById('installSuccess');
                         successNotice.style.display = 'block';
                         setTimeout(() => {
                             successNotice.style.display = 'none';
                         }, 3000);
                     } else {
-                        console.log('用户拒绝安装');
+                        console.log('用戶拒絕了安裝到主屏幕');
                     }
                     deferredPrompt = null;
                 });
             } else {
-                // 检测是否是iOS设备
+                // 檢測iOS設備
                 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
                 if (isIOS) {
-                    // 显示iOS安装指南
-                    document.getElementById('iosInstallGuide').style.display = 'block';
+                    // 為iOS用戶提供圖形化指導
+                    showIOSInstallGuide();
                 } else {
-                    // 其他平台但无法安装的情况
-                    alert('此应用可能已安装或您的浏览器不支持此功能');
+                    // 其他平台但無法安裝的情況
+                    alert('此應用可能已安裝或您的瀏覽器不支持此功能。\n\n請使用瀏覽器的選單，選擇"添加到主屏幕"功能將此應用添加到您的主頁。');
                 }
             }
         }
         
-        // 关闭iOS安装指南
-        document.getElementById('closeIosGuide').addEventListener('click', function() {
-            document.getElementById('iosInstallGuide').style.display = 'none';
-        });
-        
-        // 监听 appinstalled 事件
-        window.addEventListener('appinstalled', (evt) => {
-            console.log('应用已安装', evt);
-            document.getElementById('addToHomeBtn').style.display = 'none';
-        });
-        
-        // 在DOM加载完成后添加事件监听
-        document.addEventListener('DOMContentLoaded', function() {
-            // 添加到主屏幕按钮点击事件
-            document.getElementById('addToHomeBtn').addEventListener('click', addToHomeScreen);
+        // 專為iOS設備顯示安裝指南
+        function showIOSInstallGuide() {
+            // 創建模態對話框
+            const modal = document.createElement('div');
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.right = '0';
+            modal.style.bottom = '0';
+            modal.style.backgroundColor = 'rgba(0,0,0,0.7)';
+            modal.style.zIndex = '1000';
+            modal.style.display = 'flex';
+            modal.style.flexDirection = 'column';
+            modal.style.alignItems = 'center';
+            modal.style.justifyContent = 'center';
             
-            // 检查是否已经以PWA模式运行
-            if (window.matchMedia('(display-mode: standalone)').matches) {
-                // 如果已经安装并以独立模式运行，隐藏安装按钮
-                document.getElementById('addToHomeBtn').style.display = 'none';
+            // 創建內容容器
+            const container = document.createElement('div');
+            container.style.backgroundColor = 'white';
+            container.style.padding = '20px';
+            container.style.borderRadius = '10px';
+            container.style.maxWidth = '90%';
+            container.style.maxHeight = '80%';
+            container.style.overflow = 'auto';
+            container.style.textAlign = 'center';
+            
+            // 添加標題
+            const title = document.createElement('h3');
+            title.textContent = 'iOS添加到主屏幕指南';
+            title.style.marginBottom = '15px';
+            title.style.color = '#333';
+            
+            // 添加步驟說明
+            const steps = document.createElement('div');
+            steps.innerHTML = `
+                <p style="margin-bottom:15px;text-align:left;color:#333;">1. 點擊底部的<strong>分享按鈕</strong> <i class="fas fa-share-square" style="color:#007aff;"></i></p>
+                <p style="margin-bottom:15px;text-align:left;color:#333;">2. 在彈出的選單中滑動並尋找<strong>添加到主屏幕</strong> <i class="fas fa-plus-square" style="color:#007aff;"></i> 選項</p>
+                <p style="margin-bottom:15px;text-align:left;color:#333;">3. 點擊<strong>添加到主屏幕</strong>，然後點擊右上角的<strong>添加</strong></p>
+                <p style="margin-bottom:20px;text-align:left;color:#333;">4. 完成！現在您可以從主屏幕直接打開此應用</p>
+            `;
+            
+            // 添加關閉按鈕
+            const closeBtn = document.createElement('button');
+            closeBtn.textContent = '了解了';
+            closeBtn.style.padding = '8px 15px';
+            closeBtn.style.backgroundColor = '#007aff';
+            closeBtn.style.color = 'white';
+            closeBtn.style.border = 'none';
+            closeBtn.style.borderRadius = '5px';
+            closeBtn.style.cursor = 'pointer';
+            closeBtn.style.marginTop = '10px';
+            
+            // 組合元素
+            container.appendChild(title);
+            container.appendChild(steps);
+            container.appendChild(closeBtn);
+            modal.appendChild(container);
+            
+            // 添加關閉功能
+            closeBtn.addEventListener('click', function() {
+                document.body.removeChild(modal);
+            });
+            
+            // 顯示模態視窗
+            document.body.appendChild(modal);
+        }
+
+        // 保存安裝提示
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // 阻止 Chrome 自動顯示安裝提示
+            e.preventDefault();
+            // 保存事件，以便稍後使用
+            deferredPrompt = e;
+            
+            // 確保按鈕顯示
+            const installButton = document.getElementById('addToHomeBtn');
+            if (installButton) {
+                installButton.style.display = 'inline-flex';
+            }
+        });
+
+        // DOM 元素載入完成後執行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 深色模式支援
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add('dark');
             }
             
-            // 您的其他初始化代码...
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+                if (event.matches) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            });
+
+            // 添加到主屏幕按鈕點擊事件
+            document.getElementById('addToHomeBtn').addEventListener('click', addToHomeScreen);
+
+            // 初始設定事件監聽
+            setupEventListeners();
         });
+
+        // 設定所有事件監聽
+        function setupEventListeners() {
+            // 問題1：Error Code 選擇
+            document.getElementById('btnErrorCode').addEventListener('click', function() {
+                formData.previousQuestion = 'question1';
+                formData.details = ''; // 清空之前的細節
+                showQuestion('errorCodeSelection');
+                updateFormResult();
+            });
+
+            document.getElementById('btnNoErrorCode').addEventListener('click', function() {
+                formData.previousQuestion = 'question1';
+                formData.errorCode = '沒有Error Code';
+                formData.details = '';
+                showQuestion('noErrorCodeOptions');
+                updateFormResult();
+            });
+
+            // 返回問題1
+            document.getElementById('btnBackToQuestion1').addEventListener('click', function() {
+                formData.errorCode = '';
+                showQuestion('question1');
+                updateFormResult();
+            });
+            
+            document.getElementById('btnBackToQuestion1FromNoError').addEventListener('click', function() {
+                formData.errorCode = '';
+                formData.details = '';
+                showQuestion('question1');
+                updateFormResult();
+            });
+
+            // Error Code 按鈕點擊事件
+            document.querySelectorAll('.error-code-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    const code = this.dataset.code;
+                    formData.errorCode = code;
+                    formData.previousQuestion = 'errorCodeSelection';
+                    document.getElementById('selectedErrorCodeTitle').textContent = `Error Code: ${code}`;
+                    document.getElementById('errorCodeDescription').textContent = errorCodeDescriptions[code] || '';
+                    showQuestion('errorCodeDetails');
+                    updateFormResult();
+                });
+            });
+            
+            // 返回到Error Code選擇
+            document.getElementById('btnBackToErrorSelection').addEventListener('click', function() {
+                showQuestion('errorCodeSelection');
+            });
+
+            // 無錯誤碼的選項點擊
+            document.querySelectorAll('.underlined-option').forEach(function(option) {
+                option.addEventListener('click', function() {
+                    const detail = this.dataset.detail;
+                    const currentDetails = document.getElementById('noErrorDetails').value;
+                    
+                    // 檢查是否已經添加過相同的詳細信息
+                    if (!currentDetails.includes(detail)) {
+                        if (currentDetails) {
+                            document.getElementById('noErrorDetails').value = currentDetails + ', ' + detail;
+                        } else {
+                            document.getElementById('noErrorDetails').value = detail;
+                        }
+                        formData.details = document.getElementById('noErrorDetails').value;
+                        updateFormResult();
+                    }
+                });
+            });
+
+            // 無錯誤碼文字區域變化
+            document.getElementById('noErrorDetails').addEventListener('input', function() {
+                formData.details = this.value;
+                updateFormResult();
+            });
+
+            // 安排維修按鈕點擊事件
+            document.getElementById('btnScheduleRepair').addEventListener('click', function() {
+                formData.previousQuestion = 'errorCodeDetails';
+                showQuestion('question2');
+            });
+
+            document.getElementById('btnNoErrorScheduleRepair').addEventListener('click', function() {
+                if (!formData.details.trim()) {
+                    alert('請提供問題詳情');
+                    return;
+                }
+                formData.previousQuestion = 'noErrorCodeOptions';
+                showQuestion('question3');
+            });
+            
+            // 返回到Error Details
+            document.getElementById('btnBackToErrorDetails').addEventListener('click', function() {
+                showQuestion('errorCodeDetails');
+            });
+
+            // 問題2：Error Code 密度
+            document.querySelectorAll('.error-density-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    const density = this.dataset.density;
+                    formData.errorDensity = density;
+                    formData.previousQuestion = 'question2';
+                    updateFormResult();
+                    showQuestion('question3');
+                });
+            });
+
+            // 問題3：機身編號
+            document.getElementById('machineNumber').addEventListener('input', function() {
+                formData.machineNumber = this.value;
+                updateFormResult();
+            });
+            
+            document.getElementById('btnBackToPreviousQ').addEventListener('click', function() {
+                // 檢查上一個問題是什麼，然後返回
+                if (formData.errorCode && formData.errorCode !== '沒有Error Code') {
+                    showQuestion('question2'); // 返回到密度
+                } else {
+                    showQuestion('noErrorCodeOptions'); // 返回到無Error Code
+                }
+            });
+            
+            document.getElementById('btnContinue3').addEventListener('click', function() {
+                if (formData.machineNumber.trim() === '') {
+                    alert('請輸入機身編號');
+                    return;
+                }
+                formData.previousQuestion = 'question3';
+                showQuestion('question4');
+            });
+
+            // 問題4：客戶編號或診所名稱
+            document.getElementById('customerInfo').addEventListener('input', function() {
+                formData.customerInfo = this.value;
+                updateFormResult();
+            });
+            
+            document.getElementById('btnBackToQuestion3').addEventListener('click', function() {
+                showQuestion('question3');
+            });
+            
+            document.getElementById('btnContinue4').addEventListener('click', function() {
+                if (formData.customerInfo.trim() === '') {
+                    alert('請輸入客戶編號或診所名稱');
+                    return;
+                }
+                formData.previousQuestion = 'question4';
+                showQuestion('question5');
+            });
+            
+            // 返回到問題4
+            document.getElementById('btnBackToQuestion4').addEventListener('click', function() {
+                showQuestion('question4');
+            });
+
+            // 問題5：操作選擇
+            document.getElementById('btnSendWhatsApp').addEventListener('click', function() {
+                sendToWhatsApp();
+            });
+
+            // 修改 - 使用更兼容的複製方法
+            document.getElementById('btnCopyOnly').addEventListener('click', function() {
+                copyToClipboardCompatible();
+            });
+        }
+
+        // 更新表單結果
+        function updateFormResult() {
+            document.getElementById('resultErrorCode').textContent = `Error Code：${formData.errorCode || ''}`;
+            document.getElementById('resultErrorDensity').textContent = `Error Code密度：${formData.errorDensity || ''}`;
+            document.getElementById('resultMachineNumber').textContent = `機身編號：${formData.machineNumber || ''}`;
+            document.getElementById('resultDetails').textContent = `其他細節：${formData.details || ''}`;
+            document.getElementById('resultCustomerInfo').textContent = `客戶編號/診所名稱：${formData.customerInfo || ''}`;
+        }
+
+        // 發送到WhatsApp
+        function sendToWhatsApp() {
+            // 創建資料文本
+            const text = formatFormData();
+            
+            // 使用WhatsApp Web API
+            const whatsappURL = `https://wa.me/85252923655?text=${encodeURIComponent(text)}`;
+            window.open(whatsappURL, '_blank');
+        }
+
+        // 新的複製方法，使用document.execCommand('copy')
+        function copyToClipboardCompatible() {
+            const text = formatFormData();
+            
+            try {
+                // 使用隱藏的textarea元素
+                const hiddenTextarea = document.getElementById('hiddenCopyArea');
+                hiddenTextarea.value = text;
+                hiddenTextarea.focus();
+                hiddenTextarea.select();
+                
+                // 執行複製命令
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    alert('資料已複製到剪貼簿');
+                } else {
+                    alert('複製失敗，請手動複製以下文字:\n\n' + text);
+                }
+            } catch (err) {
+                alert('複製失敗，請手動複製以下文字:\n\n' + text);
+                console.error('複製失敗:', err);
+            }
+        }
+
+        // 格式化表單資料
+        function formatFormData() {
+            return `日本包裝機維修回報單\n\nError Code：${formData.errorCode || ''}\nError Code密度：${formData.errorDensity || ''}\n機身編號：${formData.machineNumber || ''}\n客戶編號/診所名稱：${formData.customerInfo || ''}\n其他細節：${formData.details || ''}`;
+        }
     </script>
 
 
