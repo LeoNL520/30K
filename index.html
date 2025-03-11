@@ -4,7 +4,12 @@
     <meta name="description" content="日本包裝機維修回報單 - 快速報告和安排維修服務">
     <meta name="author" content="Leo">
     <title>日本包裝機維修回報單 Beta_v1</title>
+    <!-- Web App 功能支援 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛠️</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛠️</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
@@ -66,6 +71,13 @@
         .underlined-option:active, .underlined-option:hover, .underlined-option:visited {
             color: #424242 !important;
         }
+        
+        #addToHomeBtn {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            z-index: 10;
+        }
 
         /* 深色模式支援 */
         @media (prefers-color-scheme: dark) {
@@ -85,9 +97,73 @@
                 box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
             }
         }
+        
+        /* 添加到主屏幕對話框 */
+        #homeScreenModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 20;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: var(--main-bg);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dark .modal-content {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
     </style>
 </head>
 <body class="bg-mainbg min-h-screen">
+    <!-- 添加到主屏幕按鈕 -->
+    <button id="addToHomeBtn" class="px-2 py-2 bg-buttonbg rounded-full shadow-md">
+        <i class="fas fa-plus-circle text-xl"></i>
+    </button>
+    
+    <!-- 添加到主屏幕對話框 -->
+    <div id="homeScreenModal">
+        <div class="modal-content">
+            <h3 class="text-lg font-bold mb-3">添加到主屏幕</h3>
+            <div id="iosInstructions" class="hidden">
+                <p class="mb-2">iOS設備上添加步驟：</p>
+                <ol class="list-decimal pl-5 mb-3">
+                    <li>點擊底部<i class="fas fa-share-alt mx-1"></i>分享按鈕</li>
+                    <li>滑動並點擊<i class="fas fa-plus-square mx-1"></i>「添加到主屏幕」</li>
+                </ol>
+                <img src="https://i.imgur.com/OgyJsxw.png" alt="iOS添加到主屏幕演示" class="w-full mb-3 rounded">
+            </div>
+            <div id="androidInstructions" class="hidden">
+                <p class="mb-2">Android設備上添加步驟：</p>
+                <ol class="list-decimal pl-5 mb-3">
+                    <li>點擊右上角<i class="fas fa-ellipsis-v mx-1"></i>選單按鈕</li>
+                    <li>選擇「添加到主屏幕」選項</li>
+                </ol>
+            </div>
+            <div id="otherInstructions" class="hidden">
+                <p class="mb-2">在您的設備上：</p>
+                <ol class="list-decimal pl-5 mb-3">
+                    <li>打開瀏覽器菜單</li>
+                    <li>尋找「添加到主屏幕」或類似選項</li>
+                </ol>
+            </div>
+            <div class="flex justify-end">
+                <button id="closeModalBtn" class="px-4 py-2 bg-buttonbg rounded-md">關閉</button>
+            </div>
+        </div>
+    </div>
+    
     <div class="container mx-auto px-4 py-8 max-w-3xl">
         <!-- 標題區 -->
         <div class="bg-titlebg text-white text-center p-4 rounded-t-lg shadow-md border border-bordergray">
@@ -96,17 +172,6 @@
         
         <!-- 主要內容區 -->
         <div class="bg-mainbg p-6 rounded-b-lg shadow-md mb-6 border border-t-0 border-bordergray">
-            <!-- 權限請求區域 -->
-            <div id="permissionRequest" class="mb-6">
-                <div class="p-4 border border-orange-300 bg-orange-50 rounded-lg mb-4 text-maintext">
-                    <h2 class="font-semibold mb-2">⚠️ 使用須知</h2>
-                    <p class="mb-3">需要按下方按鍵解放權限才可將此工具內的資料發送到WhatsApp，如不願意可在尾頁選擇「只複製資料」</p>
-                    <button id="btnRequestPermission" class="flex items-center px-4 py-2 bg-green-500 text-white border-0 rounded-md hover:bg-green-600">
-                        <i class="fab fa-whatsapp mr-2"></i> 授權WhatsApp連接
-                    </button>
-                </div>
-            </div>
-            
             <!-- 問答區域 -->
             <div id="questionArea" class="mb-6">
                 <div id="question1" class="question-container">
@@ -279,8 +344,7 @@
             details: '',
             customerInfo: '',
             currentQuestion: 1, // 追蹤當前問題
-            previousQuestion: null, // 追蹤上一個問題
-            permissionGranted: false // 追蹤權限狀態
+            previousQuestion: null // 追蹤上一個問題
         };
 
         // Error Code 說明
@@ -322,32 +386,27 @@
                 element.classList.remove('hidden');
             }
         }
-
-        // 請求權限函數 - 更適合普通網站環境
-        function requestPermission() {
-            try {
-                // 嘗試打開一個WhatsApp URL測試連接
-                const testUrl = 'https://wa.me/?text=test';
-                const testWindow = window.open(testUrl, '_blank');
-                
-                // 檢查是否成功打開窗口
-                if (testWindow) {
-                    // 如果打開成功，立即關閉測試窗口
-                    setTimeout(() => {
-                        if (!testWindow.closed) {
-                            testWindow.close();
-                        }
-                    }, 500);
-                    
-                    // 隱藏權限請求區域
-                    document.getElementById('permissionRequest').classList.add('hidden');
-                    formData.permissionGranted = true;
-                } else {
-                    alert('瀏覽器可能阻止了彈出窗口，請允許彈出窗口');
-                }
-            } catch (err) {
-                console.error('權限請求失敗:', err);
-                alert('無法打開WhatsApp連接，請確保瀏覽器允許彈出窗口');
+        
+        // 添加到主屏幕功能
+        function showAddToHomeScreen() {
+            const modal = document.getElementById('homeScreenModal');
+            modal.style.display = 'flex';
+            
+            // 判斷設備類型並顯示對應說明
+            const ua = navigator.userAgent;
+            
+            // 隱藏所有說明
+            document.getElementById('iosInstructions').classList.add('hidden');
+            document.getElementById('androidInstructions').classList.add('hidden');
+            document.getElementById('otherInstructions').classList.add('hidden');
+            
+            // 根據用戶代理顯示對應說明
+            if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) {
+                document.getElementById('iosInstructions').classList.remove('hidden');
+            } else if (/Android/.test(ua)) {
+                document.getElementById('androidInstructions').classList.remove('hidden');
+            } else {
+                document.getElementById('otherInstructions').classList.remove('hidden');
             }
         }
 
@@ -356,39 +415,30 @@
             // 深色模式支援
             if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
                 document.documentElement.classList.add('dark');
-                
-                // 調整深色模式下的警告顏色
-                const warningBox = document.querySelector('#permissionRequest > div');
-                if (warningBox) {
-                    warningBox.classList.remove('bg-orange-50');
-                    warningBox.classList.add('bg-orange-900', 'bg-opacity-20', 'border-orange-700');
-                }
             }
             
             window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
                 if (event.matches) {
                     document.documentElement.classList.add('dark');
-                    
-                    // 調整深色模式下的警告顏色
-                    const warningBox = document.querySelector('#permissionRequest > div');
-                    if (warningBox) {
-                        warningBox.classList.remove('bg-orange-50');
-                        warningBox.classList.add('bg-orange-900', 'bg-opacity-20', 'border-orange-700');
-                    }
                 } else {
                     document.documentElement.classList.remove('dark');
-                    
-                    // 調整淺色模式下的警告顏色
-                    const warningBox = document.querySelector('#permissionRequest > div');
-                    if (warningBox) {
-                        warningBox.classList.add('bg-orange-50');
-                        warningBox.classList.remove('bg-orange-900', 'bg-opacity-20', 'border-orange-700');
-                    }
                 }
             });
 
-            // 權限請求按鈕事件監聽
-            document.getElementById('btnRequestPermission').addEventListener('click', requestPermission);
+            // 添加到主屏幕按鈕點擊事件
+            document.getElementById('addToHomeBtn').addEventListener('click', showAddToHomeScreen);
+            
+            // 關閉模態框按鈕
+            document.getElementById('closeModalBtn').addEventListener('click', function() {
+                document.getElementById('homeScreenModal').style.display = 'none';
+            });
+            
+            // 點擊模態框背景關閉
+            document.getElementById('homeScreenModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.style.display = 'none';
+                }
+            });
 
             // 初始設定事件監聽
             setupEventListeners();
@@ -600,13 +650,6 @@
                 alert('複製失敗，請手動複製以下文字:\n\n' + text);
                 console.error('複製失敗:', err);
             }
-        }
-
-        // 驗證表單資料
-        function validateFormData() {
-            // 只檢查是否有資料，不再阻止操作
-            // 直接複製當前的表單資料，無論其是否完整
-            return true;
         }
 
         // 格式化表單資料
