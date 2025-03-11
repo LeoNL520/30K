@@ -1,23 +1,22 @@
 {
   "name": "日本包裝機維修回報單",
   "short_name": "維修回報單",
-  "description": "快速報告和安排日本包裝機維修服務",
-  "start_url": "/index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#F6F5F3",
   "theme_color": "#909FA6",
+  "description": "快速报告和安排日本包裝機维修服务",
+  "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "./icon-192.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     },
     {
-      "src": "icon-512.png",
+      "src": "./icon-512.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     }
   ]
 }
