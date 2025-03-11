@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
+<!DOCTYPE html><html lang="zh-TW"><head><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="日本包裝機維修回報單 - 快速報告和安排維修服務">
@@ -294,7 +292,7 @@
         </div>
         
         <!-- 用於複製的隱藏元素 -->
-        <textarea id="hiddenCopyArea" style="position: absolute; left: -9999px; top: 0;" readonly></textarea>
+        <textarea id="hiddenCopyArea" style="position: absolute; left: -9999px; top: 0;" readonly=""></textarea>
     </div>
 
     <!-- JavaScript -->
@@ -373,9 +371,83 @@
                     deferredPrompt = null;
                 });
             } else {
-                // 如果不支持直接添加，則提供手動添加的指南
-                alert('請使用瀏覽器的"添加到主屏幕"功能將此應用添加到您的手機主頁');
+                // 檢測iOS設備
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+                if (isIOS) {
+                    // 為iOS用戶提供圖形化指導
+                    showIOSInstallGuide();
+                } else {
+                    // 其他平台但無法安裝的情況
+                    alert('此應用可能已安裝或您的瀏覽器不支持此功能。\n\n請使用瀏覽器的選單，選擇"添加到主屏幕"功能將此應用添加到您的主頁。');
+                }
             }
+        }
+        
+        // 專為iOS設備顯示安裝指南
+        function showIOSInstallGuide() {
+            // 創建模態對話框
+            const modal = document.createElement('div');
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.right = '0';
+            modal.style.bottom = '0';
+            modal.style.backgroundColor = 'rgba(0,0,0,0.7)';
+            modal.style.zIndex = '1000';
+            modal.style.display = 'flex';
+            modal.style.flexDirection = 'column';
+            modal.style.alignItems = 'center';
+            modal.style.justifyContent = 'center';
+            
+            // 創建內容容器
+            const container = document.createElement('div');
+            container.style.backgroundColor = 'white';
+            container.style.padding = '20px';
+            container.style.borderRadius = '10px';
+            container.style.maxWidth = '90%';
+            container.style.maxHeight = '80%';
+            container.style.overflow = 'auto';
+            container.style.textAlign = 'center';
+            
+            // 添加標題
+            const title = document.createElement('h3');
+            title.textContent = 'iOS添加到主屏幕指南';
+            title.style.marginBottom = '15px';
+            title.style.color = '#333';
+            
+            // 添加步驟說明
+            const steps = document.createElement('div');
+            steps.innerHTML = `
+                <p style="margin-bottom:15px;text-align:left;color:#333;">1. 點擊底部的<strong>分享按鈕</strong> <i class="fas fa-share-square" style="color:#007aff;"></i></p>
+                <p style="margin-bottom:15px;text-align:left;color:#333;">2. 在彈出的選單中滑動並尋找<strong>添加到主屏幕</strong> <i class="fas fa-plus-square" style="color:#007aff;"></i> 選項</p>
+                <p style="margin-bottom:15px;text-align:left;color:#333;">3. 點擊<strong>添加到主屏幕</strong>，然後點擊右上角的<strong>添加</strong></p>
+                <p style="margin-bottom:20px;text-align:left;color:#333;">4. 完成！現在您可以從主屏幕直接打開此應用</p>
+            `;
+            
+            // 添加關閉按鈕
+            const closeBtn = document.createElement('button');
+            closeBtn.textContent = '了解了';
+            closeBtn.style.padding = '8px 15px';
+            closeBtn.style.backgroundColor = '#007aff';
+            closeBtn.style.color = 'white';
+            closeBtn.style.border = 'none';
+            closeBtn.style.borderRadius = '5px';
+            closeBtn.style.cursor = 'pointer';
+            closeBtn.style.marginTop = '10px';
+            
+            // 組合元素
+            container.appendChild(title);
+            container.appendChild(steps);
+            container.appendChild(closeBtn);
+            modal.appendChild(container);
+            
+            // 添加關閉功能
+            closeBtn.addEventListener('click', function() {
+                document.body.removeChild(modal);
+            });
+            
+            // 顯示模態視窗
+            document.body.appendChild(modal);
         }
 
         // 保存安裝提示
@@ -385,6 +457,12 @@
             e.preventDefault();
             // 保存事件，以便稍後使用
             deferredPrompt = e;
+            
+            // 確保按鈕顯示
+            const installButton = document.getElementById('addToHomeBtn');
+            if (installButton) {
+                installButton.style.display = 'inline-flex';
+            }
         });
 
         // DOM 元素載入完成後執行
@@ -622,5 +700,6 @@
             return `日本包裝機維修回報單\n\nError Code：${formData.errorCode || ''}\nError Code密度：${formData.errorDensity || ''}\n機身編號：${formData.machineNumber || ''}\n客戶編號/診所名稱：${formData.customerInfo || ''}\n其他細節：${formData.details || ''}`;
         }
     </script>
-</body>
-</html>
+
+
+</body></html>
